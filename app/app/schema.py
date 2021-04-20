@@ -1,9 +1,9 @@
 import graphene
 
-from app.tracks import schema
+import tracks.schema
 
 
-class Query(schema.Query, graphene.ObjectType):
+class Query(tracks.schema.Query, graphene.ObjectType):
     pass
 
 
