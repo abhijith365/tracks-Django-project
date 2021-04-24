@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 import graphene
 from graphene_django import DjangoObjectType
-from typing_extensions import Required
 
 
 class UserType(DjangoObjectType):
@@ -24,6 +23,7 @@ class CreateUser(graphene.Mutation):
         )
         user.set_password(password)
         user.save()
+        return CreateUser(user=user)
 
 
 class Mutation(graphene.ObjectType):
