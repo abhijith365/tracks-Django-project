@@ -1,6 +1,7 @@
 import graphene
 
 from graphene_django import DjangoObjectType
+from graphql.type.definition import T
 
 from .models import Tracks
 
@@ -40,5 +41,31 @@ class CreateTracks(graphene.Mutation):
         return CreateTracks(track=track)
 
 
+class UpdateTrack(graphene.Mutation):
+    track = graphene.Field(TracksType)
+
+    class Arguments:
+        track_id = graphene.Int(required=True)
+        title = graphene.String()
+        description = graphene.String()
+        url = graphene.String()
+
+    def mutate(self, info, track_id, title, url, description):
+        user = info.context.user
+        track = Tracks.objects.get(id=track_id)
+
+        if track.posted_by != user:
+            raise Exception("Not permitted to update this track.")
+
+        track.title = title
+        track.description = description
+        track.url = url
+
+        track.save()
+
+        return UpdateTrack(track=track)
+
+
 class Mutation(graphene.ObjectType):
     create_tracks = CreateTracks.Field()
+    update_track = UpdateTrack.Field()
